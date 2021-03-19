@@ -59,6 +59,7 @@ void run(int n)
         pthread_join(threads[i], NULL);
 
     printf("\n Number: %d", number);
+    getch();
     return 0;
     pthread_exit(NULL);
 }
