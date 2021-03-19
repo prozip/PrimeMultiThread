@@ -22,4 +22,5 @@ int isPrime(long num)
 int main()
 {
     printf("%d", isPrime(2));
+    getch();
 }
