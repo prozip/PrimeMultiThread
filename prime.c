@@ -9,7 +9,7 @@ int isPrime(long num)
         return 1;
     if (num % 2 == 0 || num % 3 == 0)
         return 0;
-    long max = (long)(sqrt(num) / 6);
+    long max = (long)(sqrt(num));
     for (long i = 5; i <= max; i = i + 6)
     {
         if (num % i == 0 || num % (i + 2) == 0)
@@ -21,6 +21,6 @@ int isPrime(long num)
 }
 int main()
 {
-    printf("%d", isPrime(2));
+    printf("%d", isPrime(500000));
     getch();
 }

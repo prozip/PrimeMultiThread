@@ -1,8 +1,10 @@
 #include <pthread.h>
 #include <math.h>
+#include <time.h>
 
 int number = 0;
 long a, b;
+static pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
 
 int isPrime(long num)
 {
@@ -12,7 +14,7 @@ int isPrime(long num)
         return 1;
     if (num % 2 == 0 || num % 3 == 0)
         return 0;
-    long max = (long)(sqrt(num) / 6);
+    long max = (long)(sqrt(num));
     for (long i = 5; i <= max; i = i + 6)
     {
         if (num % i == 0 || num % (i + 2) == 0)
@@ -22,17 +24,28 @@ int isPrime(long num)
     }
     return 1;
 }
+
 void *check(void *threadid)
 {
     long tid;
     tid = (long)threadid;
     while (a < b)
     {
-        a++;
+        pthread_mutex_lock(&mutex);
+
+        ++a;
+
+        pthread_mutex_unlock(&mutex);
+
         int primeCheck = isPrime(a);
         if (primeCheck == 1)
+        {
+            pthread_mutex_lock(&mutex);
             number++;
-        printf("Thread: %d, num: %d, isPrime: %d \n", tid, a, primeCheck);
+            pthread_mutex_unlock(&mutex);
+        }
+
+        // printf("Thread: %d, num: %d, isPrime: %d \n", tid, a, primeCheck);
     }
     pthread_exit(NULL);
 }
@@ -41,6 +54,8 @@ void run(int n)
     pthread_t threads[n];
     int error;
     int i;
+    clock_t t;
+    t = clock();
 
     // create and run n thread
     for (i = 0; i < n; i++)
@@ -58,8 +73,12 @@ void run(int n)
     for (int i = 0; i < n; i++)
         pthread_join(threads[i], NULL);
 
-    printf("\n Number: %d", number);
-    getch();
+    printf("\n Number: %d\n", number);
+
+    t = clock() - t;
+    double time_taken = ((double)t) / CLOCKS_PER_SEC;
+    printf(" Total time: %f sec\n", time_taken);
+
     return 0;
     pthread_exit(NULL);
 }
