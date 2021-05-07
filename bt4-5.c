@@ -3,8 +3,10 @@
 #include <time.h>
 
 int number = 0;
+int isRunning = 0;
 long a, b;
 static pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
+pthread_cond_t cond = PTHREAD_COND_INITIALIZER;
 
 int isPrime(long num)
 {
@@ -29,15 +31,15 @@ void *check(void *threadid)
 {
     long tid;
     tid = (long)threadid;
+    long temp;
     while (a < b)
     {
         pthread_mutex_lock(&mutex);
-
-        ++a;
-
+        temp = a;
+        a = a + 1;
         pthread_mutex_unlock(&mutex);
 
-        int primeCheck = isPrime(a);
+        int primeCheck = isPrime(temp);
         if (primeCheck == 1)
         {
             pthread_mutex_lock(&mutex);
@@ -87,7 +89,6 @@ int main()
     int n;
     printf("Nhap a: ");
     scanf("%d", &a);
-    a--;
     printf("Nhap b: ");
     scanf("%d", &b);
     printf("Nhap n: ");
